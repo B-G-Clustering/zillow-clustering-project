@@ -13,11 +13,19 @@ All files referenced in this presentation are available in the github repository
 
 #### Hypotheses:
 
-- H$_{0}$: 
-  H$_{a}$:
+- H$_{0}$: There is no difference in log error based on a properties square footage.
+  H$_{a}$:  Properties with a square footage less than 2800 square footage have a lower log error than larger properties.
+  alpha ( 𝛼 ): 1 - confidence level (95% confidence level -> 𝛼=.05 )
 
-- H$_{0}$: 
-  H$_{a}$: 
+- H$_{0}$: There is no difference in median log error in properties built in different years. 
+  H$_{a}$: Properties that were built after 1975 have a higher median log error than properties built before 1975.
+  alpha ( 𝛼 ): 1 - confidence level (95% confidence level -> 𝛼=.05 )
+
+- H$_{0}$: There is no correlation between latitude and log error.
+  H$_{a}$: Properties that are more southern have a higher log error.
+  alpha ( 𝛼 ): 1 - confidence level (95% confidence level -> 𝛼=.05 )
+
+
 
 #### Recommendation & Takeaways:
 
@@ -68,8 +76,8 @@ Each step in the process is recorded and staged on a Trello board at: https://tr
 - Plotted the residuals and documented evaluation metrics (SSE, RMSE, or MSE).
 
 ```Deliver:```
-- Clearly documented all code in a reproducible Jupyter notebook called Zillow_Regression_Project.
-- Created a Google slide presentation that can be shared with Zillow management.
+- Clearly documented all code in a reproducible Jupyter notebook called Zillow_Clustering_Project.
+
 
 #### Instructions for Reproducing My Findings:
 
