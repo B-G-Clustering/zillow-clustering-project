@@ -1,1 +1,16 @@
+dictionary.txt
+secrets.txt
+solutions.ipynb
+*.json
+*.xlsx
 env.py
+.ipynb_checkpoints/
+__pycache__
+.DS_Store
+Thumbs.db
+.vscode/
+*.csv
+titanic.csv
+iris.csv
+solutions.py
+functions_lesson.ipynb
