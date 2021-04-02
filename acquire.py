@@ -55,7 +55,8 @@ FROM   properties_2017 prop
        LEFT JOIN storytype story USING (storytypeid) 
        LEFT JOIN typeconstructiontype construct USING (typeconstructiontypeid) 
 WHERE  prop.latitude IS NOT NULL 
-       AND prop.longitude IS NOT NULL;
+       AND prop.longitude IS NOT NULL
+       AND (propertylandusetypeid IN (261, 262, 263, 264, 268, 273, 274, 276, 279));
             ''' , get_connection('zillow'))
         # Write that dataframe to disk for later. Called "caching" the data for later.
         df.to_csv(filename)
