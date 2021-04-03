@@ -9,6 +9,8 @@ Our team has been asked to analyze Zillow data on single unit/single family prop
 
 Data Source: Zillow database on Codeup's data server.
 
+#### Project Goals: 
+
 
 
 All files referenced in this presentation are available in the github repository for this project: https://github.com/B-G-Clustering/zillow-clustering-project
