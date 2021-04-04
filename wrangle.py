@@ -161,7 +161,7 @@ def data_split(df, stratify_by='logerror'):
 def scaled_data(X_train, X_validate, X_test):
     
     # Make the thing
-    scaler = sklearn.preprocessing.RobustScaler()
+    scaler = sklearn.preprocessing.MinMaxScaler()
 
     # We fit on the training data
     # in a way, we treat our scalers like our ML models
