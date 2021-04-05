@@ -115,7 +115,6 @@ def wrangle_zillow():
     # Just to be sure we caught all nulls, drop them here
     df = df.dropna()
    
-
     #recalculate yearbuilt to age of home:
     df.yearbuilt = 2017 - df.yearbuilt 
     #rename columns:
