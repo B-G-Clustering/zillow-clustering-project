@@ -140,7 +140,7 @@ def wrangle_zillow():
                        labels = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9])
 
     # bin tax value
-    df['tax_value_bin'] = pd.cut(df.tax_value, bins = 10, labels = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9])
+    df['tax_value_bin'] = pd.cut(df.tax_value, bins = 10, labels = ["< $83,800","$153,306", "$226,872", "$296,838", "$368,866", "$446,553", '$543,420', "$689,527", "$984,854", "$5,000,000"])
     
     # square feet bin
     df['sqft_bin'] = pd.cut(df.square_feet, 
