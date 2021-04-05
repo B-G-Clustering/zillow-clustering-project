@@ -5,7 +5,7 @@ import env
 
 import sklearn.preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import MinMaxScaler
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -191,6 +191,16 @@ def wrangle_zillow():
               )]
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def tidy_wrangle():
+    '''This function takes in the wrangled zillow dataframe, drops unneeded columns and prepares it for splitting then scaling.'''
+    df= wrangle_zillow()
+    df= df.drop(columns=['parcelid', 'bathrooms', 'bedrooms', 'buildingquality', 'square_feet','fips', 'lot_size', 'regionidcity',
+       'regionidcounty', 'regionidzip', 'roomcnt', 'unit_count', 'assessmentyear', 'transactiondate', 'heating_system',
+       'age_bin', 'taxrate',  'acres_bin', 'sqft_bin', 'structure_dollar_sqft_bin', 'lot_dollar_sqft_bin', 'bath_bed_ratio','tax_value_bin', 'land_tax_value_bin'])
+    return df
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def data_split(df, stratify_by='logerror'):
     '''
@@ -203,6 +213,7 @@ def data_split(df, stratify_by='logerror'):
     The function returns 3 dataframes and 3 series:
     X_train (df) & y_train (series), X_validate & y_validate, X_test & y_test. 
     '''
+
     # split df into test (20%) and train_validate (80%)
     train_validate, test = train_test_split(df, test_size=.2, random_state=123)
 
@@ -223,26 +234,13 @@ def data_split(df, stratify_by='logerror'):
     return X_train, y_train, X_validate, y_validate, X_test, y_test
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def scaler_data(X_train, X_validate, X_test):
+    num_vars = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
+       'land_tax_value', 'taxamount', 'acres',
+       'structure_dollar_per_sqft', 'land_dollar_per_sqft']
 
-def scaled_data(X_train, X_validate, X_test):
-    
-    # Make the thing
-    scaler = sklearn.preprocessing.MinMaxScaler()
-
-    # We fit on the training data
-    # in a way, we treat our scalers like our ML models
-    # we only .fit on the training data
-    scaler.fit(X_train)
-    
-    train_scaled = scaler.transform(X_train)
-    validate_scaled = scaler.transform(X_validate)
-    test_scaled = scaler.transform(X_test)
-    
-    X_train.col = ['bathrooms', 'bedrooms','buildingquality']
-
-    # turn the numpy arrays into dataframes
-    X_train = pd.DataFrame(train_scaled, columns=X_train.col)
-    X_validate = pd.DataFrame(validate_scaled, columns=X_train.col)
-    X_test = pd.DataFrame(test_scaled, columns=X_train.col)
-    
-    return X_train, X_validate, X_test
+    scaler = MinMaxScaler(copy=True, feature_range=(0,1))
+    X_train_scaled = scaler.fit_transform(X_train[num_vars])
+    X_validate_scaled = scaler.transform(X_validate[num_vars])
+    X_test_scaled = scaler.transform(X_test[num_vars])
+    return X_train_scaled, X_validate_scaled, X_test_scaled
