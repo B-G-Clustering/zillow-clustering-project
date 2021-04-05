@@ -126,8 +126,8 @@ def wrangle_zillow():
     
     df['age_bin'] = pd.cut(df.age, 
                            bins = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140],
-                           labels = [0, .066, .133, .20, .266, .333, .40, .466, .533, 
-                                     .60, .666, .733, .8, .866, .933])
+                           labels = ["0-5","5-10","10-20","20-30", "30-40", "40-50", "50-60", "60-70", "70-80", 
+                                     "80-90", "90-100", "100-110", "110-120", "120-130", "130-140"])
 
     # create taxrate variable
     df['taxrate'] = df.taxamount/df.tax_value*100
@@ -164,7 +164,7 @@ def wrangle_zillow():
 
 
     # update datatypes of binned values to be float
-    df = df.astype({'sqft_bin': 'float64', 'acres_bin': 'float64', 'age_bin': 'float64',
+    df = df.astype({'sqft_bin': 'float64', 'acres_bin': 'float64', 
                     'structure_dollar_sqft_bin': 'float64', 'lot_dollar_sqft_bin': 'float64'})
 
 
