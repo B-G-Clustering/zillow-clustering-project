@@ -139,6 +139,10 @@ def wrangle_zillow():
     df['acres_bin'] = pd.cut(df.acres, bins = [0, .10, .15, .25, .5, 1, 5, 10, 20, 50, 200], 
                        labels = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9])
 
+    # bin tax value
+    df['tax_value_bin'] = pd.cut(df.tax value,  
+                       labels = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9])
+    
     # square feet bin
     df['sqft_bin'] = pd.cut(df.square_feet, 
                             bins = [0, 800, 1000, 1250, 1500, 2000, 2500, 3000, 4000, 7000, 12000],
@@ -159,13 +163,13 @@ def wrangle_zillow():
     df['land_dollar_per_sqft'] = df.land_tax_value/df.lot_size
 
     df['lot_dollar_sqft_bin'] = pd.cut(df.land_dollar_per_sqft, bins = [0, 1, 5, 20, 50, 100, 250, 500, 1000, 1500, 2000],
-                                       labels = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9]
+                                       labels = ['0', '1', '5-19', '20-49', '50-99', '100-249', '250-499', '500-999', '1000-1499', '1500-2000']
                                       )
 
 
     # update datatypes of binned values to be float
     df = df.astype({'sqft_bin': 'float64', 'acres_bin': 'float64', 
-                    'structure_dollar_sqft_bin': 'float64', 'lot_dollar_sqft_bin': 'float64'})
+                    'structure_dollar_sqft_bin': 'float64'})
 
 
     # ratio of bathrooms to bedrooms
