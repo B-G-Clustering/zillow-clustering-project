@@ -239,8 +239,17 @@ def scaler_data(X_train, X_validate, X_test):
        'land_tax_value', 'taxamount', 'acres',
        'structure_dollar_per_sqft', 'land_dollar_per_sqft']
 
-    scaler = MinMaxScaler(copy=True, feature_range=(0,1))
-    X_train_scaled = scaler.fit_transform(X_train[num_vars])
-    X_validate_scaled = scaler.transform(X_validate[num_vars])
-    X_test_scaled = scaler.transform(X_test[num_vars])
+    scaler = MinMaxScaler()
+    X_train_1 = scaler.fit_transform(X_train[num_vars])
+    X_validate_2 = scaler.transform(X_validate[num_vars])
+    X_test_3 = scaler.transform(X_test[num_vars])
+    X_train_scaled= pd.DataFrame(X_train_1, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
+       'land_tax_value', 'taxamount', 'acres',
+       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
+    X_validate_scaled= pd.DataFrame(X_validate_2, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
+       'land_tax_value', 'taxamount', 'acres',
+       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
+    X_test_scaled=pd.DataFrame(X_test_3, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
+       'land_tax_value', 'taxamount', 'acres',
+       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
     return X_train_scaled, X_validate_scaled, X_test_scaled
