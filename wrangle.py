@@ -7,6 +7,8 @@ import sklearn.preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
+
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -64,7 +66,7 @@ def handle_missing_values(df, prop_required_column = .5, prop_required_row = .70
 def wrangle_zillow():
     
     '''
-    This function reads in the csv from the acquire.py which acquires the Zillow data from Codeup's database on the MySQL server.  
+    This function acquires the Zillow data from Codeup's database on the MySQL server.  
     
     It then prepares the data by removing columns and rows that are missing more than 50% of the 
     data, restricts the dataframe to include only single unit properties, with at least one
@@ -120,6 +122,9 @@ def wrangle_zillow():
     #rename columns:
     df.rename(columns={'taxvaluedollarcounty':'tax_value', 'bedroomcnt':'bedrooms', 'bathroomcnt':'bathrooms', 'calculatedfinishedsquarefeet':
                       'square_feet', 'lotsizesquarefeet':'lot_size', 'buildingqualitytypeid':'buildingquality', 'yearbuilt':'age', 'taxvaluedollarcnt': 'tax_value', 'landtaxvaluedollarcnt': 'land_tax_value', 'unitcnt': 'unit_count', 'heatingorsystemdesc': 'heating_system', 'structuretaxvaluedollarcnt': 'structure_tax_value'}, inplace=True)
+    
+        
+    
     
     df['age_bin'] = pd.cut(df.age, 
                            bins = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140],
@@ -177,6 +182,9 @@ def wrangle_zillow():
     # 12447 is the ID for city of LA. 
     # I confirmed through sampling and plotting, as well as looking up a few addresses.
     df['cola'] = df['regionidcity'].apply(lambda x: 1 if x == 12447.0 else 0)
+    
+    df = df.drop(columns=['parcelid', 'buildingquality', 'county', 'lot_size', 'regionidcity',
+       'regionidcounty', 'regionidzip', 'roomcnt', 'unit_count', 'assessmentyear', 'transactiondate', 'heating_system'])
   
     
     return df [((df.bathrooms <= 7) & (df.bedrooms <= 7) &
@@ -186,29 +194,6 @@ def wrangle_zillow():
                (df.square_feet <= 9000) & 
                (df.taxrate <= 10)
               )]
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def remove_outliers():
-    '''
-    remove outliers in bed, bath, square feet, acres & tax rate
-    '''
-    df= wrangle_zillow()
-    return df[((df.bathrooms <= 7) & (df.bedrooms <= 7) &
-               (df.bathrooms >= 1) & 
-               (df.bedrooms >= 1) & 
-               (df.acres <= 20) &
-               (df.square_feet <= 9000) & 
-               (df.taxrate <= 10)
-              )]
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def tidy_wrangle():
-    '''This function takes in the wrangled zillow dataframe, drops unneeded columns and prepares it for splitting then scaling.'''
-    df= wrangle_zillow()
-    df= df.drop(columns=['parcelid', 'bathrooms', 'bedrooms', 'buildingquality', 'county','square_feet', 'lot_size', 'regionidcity','regionidcounty', 'regionidzip', 'roomcnt', 'unit_count', 'assessmentyear', 'transactiondate', 'heating_system', 'age_bin', 'taxrate',  'acres_bin', 'sqft_bin', 'structure_dollar_sqft_bin', 'lot_dollar_sqft_bin', 'bath_bed_ratio','tax_value_bin', 'land_tax_value_bin'])
-    return df
-
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -223,7 +208,10 @@ def data_split(df, stratify_by='logerror'):
     The function returns 3 dataframes and 3 series:
     X_train (df) & y_train (series), X_validate & y_validate, X_test & y_test. 
     '''
-
+    df = df.drop(columns=['age_bin', 'taxrate', 'acres_bin',
+       'tax_value_bin', 'land_tax_value_bin', 'sqft_bin',
+       'structure_dollar_sqft_bin', 'lot_dollar_sqft_bin'])
+    
     # split df into test (20%) and train_validate (80%)
     train_validate, test = train_test_split(df, test_size=.2, random_state=123)
 
@@ -244,3 +232,22 @@ def data_split(df, stratify_by='logerror'):
     return X_train, y_train, X_validate, y_validate, X_test, y_test
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def scaled_data(X_train, X_validate, X_test, y_train, y_validate, y_test):
+
+    # Make the scaler
+    scaler = MinMaxScaler()
+
+    # Fit the scaler
+    scaler.fit(X_train)
+
+    # Use the scaler
+    X_train_scaled = pd.DataFrame(scaler.transform(X_train), columns=X_train.columns)
+    X_validate_scaled = pd.DataFrame(scaler.transform(X_validate), columns=X_train.columns)
+    X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_train.columns)
+    
+    # Make y_values separate dataframes
+    y_train = pd.DataFrame(y_train)
+    y_validate = pd.DataFrame(y_validate)
+    y_test = pd.DataFrame(y_test)
+    return X_train_scaled, X_validate_scaled, X_test_scaled, y_train, y_validate, y_test
