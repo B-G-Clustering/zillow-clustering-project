@@ -194,7 +194,7 @@ def wrangle_zillow():
 def tidy_wrangle():
     '''This function takes in the wrangled zillow dataframe, drops unneeded columns and prepares it for splitting then scaling.'''
     df= wrangle_zillow()
-    df= df.drop(columns=['parcelid', 'bathrooms', 'bedrooms', 'buildingquality', 'square_feet','fips', 'lot_size', 'regionidcity',
+    df= df.drop(columns=['parcelid', 'bathrooms', 'bedrooms', 'buildingquality', 'square_feet', 'lot_size', 'regionidcity',
        'regionidcounty', 'regionidzip', 'roomcnt', 'unit_count', 'assessmentyear', 'transactiondate', 'heating_system',
        'age_bin', 'taxrate',  'acres_bin', 'sqft_bin', 'structure_dollar_sqft_bin', 'lot_dollar_sqft_bin', 'bath_bed_ratio','tax_value_bin', 'land_tax_value_bin'])
     return df
@@ -239,17 +239,8 @@ def scaler_data(X_train, X_validate, X_test):
        'land_tax_value', 'taxamount', 'acres',
        'structure_dollar_per_sqft', 'land_dollar_per_sqft']
 
-    scaler = MinMaxScaler()
-    X_train_1 = scaler.fit_transform(X_train[num_vars])
-    X_validate_2 = scaler.transform(X_validate[num_vars])
-    X_test_3 = scaler.transform(X_test[num_vars])
-    X_train_scaled= pd.DataFrame(X_train_1, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
-       'land_tax_value', 'taxamount', 'acres',
-       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
-    X_validate_scaled= pd.DataFrame(X_validate_2, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
-       'land_tax_value', 'taxamount', 'acres',
-       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
-    X_test_scaled=pd.DataFrame(X_test_3, columns = ['latitude', 'longitude', 'age', 'structure_tax_value', 'tax_value',
-       'land_tax_value', 'taxamount', 'acres',
-       'structure_dollar_per_sqft', 'land_dollar_per_sqft'])
+    scaler = MinMaxScaler(copy=True, feature_range=(0,1))
+    X_train_scaled = scaler.fit_transform(X_train[num_vars])
+    X_validate_scaled = scaler.transform(X_validate[num_vars])
+    X_test_scaled = scaler.transform(X_test[num_vars])
     return X_train_scaled, X_validate_scaled, X_test_scaled
