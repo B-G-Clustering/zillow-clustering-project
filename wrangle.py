@@ -244,14 +244,16 @@ def scaled_data(X_train, X_validate, X_test, y_train, y_validate, y_test):
 
     # Use the scaler
     X_train_scaled = pd.DataFrame(scaler.transform(X_train), columns=X_train.columns)
-    X_validate_scaled = pd.DataFrame(scaler.transform(X_validate), columns=X_train.columns)
-    X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_train.columns)
+    X_validate_scaled = pd.DataFrame(scaler.transform(X_validate), columns=X_validate.columns)
+    X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_test.columns)
     
     # Make y_values separate dataframes
     y_train = pd.DataFrame(y_train)
     y_validate = pd.DataFrame(y_validate)
     y_test = pd.DataFrame(y_test)
-    return X_train_scaled, X_validate_scaled, X_test_scaled, y_train, y_validate, y_test
+    #Unscaled data for later
+    X_unscaled= pd.DataFrame(scaler.inverse_transform(X_test), columns=X_test.columns)
+    return X_train_scaled, X_validate_scaled, X_test_scaled, y_train, y_validate, y_test, X_unscaled
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -298,3 +300,17 @@ def one_hot_encoding(df, features):
     df = pd.concat([df, dummy_df], axis=1)
     df.drop(columns=features, inplace=True)
     return df
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+def clusters_hypothesis_split ():
+    df=wrangle_zillow()
+    
+    df = df.drop(columns=['age_bin', 'taxrate', 'acres_bin',
+       'tax_value_bin', 'land_tax_value_bin', 'sqft_bin',
+       'structure_dollar_sqft_bin', 'lot_dollar_sqft_bin'])
+    # split df into test (20%) and train_validate (80%)
+    train_validate, cl_test = train_test_split(df, test_size=.2, random_state=123)
+
+    # split train_validate off into train (70% of 80% = 56%) and validate (30% of 80% = 24%)
+    cl_train, cl_validate = train_test_split(train_validate, test_size=.3, random_state=123)
+    
+    return cl_train, cl_validate, cl_test
