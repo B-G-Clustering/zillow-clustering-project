@@ -59,6 +59,6 @@ WHERE  prop.latitude IS NOT NULL
        AND (propertylandusetypeid IN (261, 262, 263, 264, 268, 273, 274, 276, 279));
             ''' , get_connection('zillow'))
         # Write that dataframe to disk for later. Called "caching" the data for later.
-        df.to_csv(filename)
+        df.to_csv('zillow_db.csv')
         # Return the dataframe to the calling code
         return df
