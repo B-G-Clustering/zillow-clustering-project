@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 import env
-
+from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import SelectKBest, RFE, f_regression 
 import sklearn.preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
@@ -251,3 +252,34 @@ def scaled_data(X_train, X_validate, X_test, y_train, y_validate, y_test):
     y_validate = pd.DataFrame(y_validate)
     y_test = pd.DataFrame(y_test)
     return X_train_scaled, X_validate_scaled, X_test_scaled, y_train, y_validate, y_test
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def select_kbest(X_train, y_train, k):
+    '''
+    Takes in the predictors (X_train_scaled), the target (y_train), 
+    and the number of features to select (k) 
+    and returns the names of the top k selected features based on the SelectKBest class
+    '''
+    f_selector = SelectKBest(f_regression, k)
+    f_selector = f_selector.fit(X_train, y_train)
+    X_train_reduced = f_selector.transform(X_train)
+    f_support = f_selector.get_support()
+    f_feature = X_train.iloc[:,f_support].columns.tolist()
+    return f_feature
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def rfe(X_train, y_train, k):
+    '''
+    Takes in the predictor (X_train_scaled), the target (y_train), 
+    and the number of features to select (k).
+    Returns the top k features based on the RFE class.
+    '''
+    lm = LinearRegression()
+    rfe = RFE(lm, k)
+    # Transforming data using RFE
+    X_rfe = rfe.fit_transform(X_train, y_train)
+    #Fitting the data to model
+    lm.fit(X_rfe,y_train)
+    mask = rfe.support_
+    rfe_features = X_train.loc[:,mask].columns.tolist()
+    return rfe_features
