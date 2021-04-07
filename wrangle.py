@@ -283,3 +283,18 @@ def rfe(X_train, y_train, k):
     mask = rfe.support_
     rfe_features = X_train.loc[:,mask].columns.tolist()
     return rfe_features
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def one_hot_encoding(df, features):
+    '''
+    Takes in a dataframe (df) and a list of categorical (object type) features (features) to encode as numeric dummy variables, then drops the
+    original listed feature columns from the dataframe.
+    
+    Returns the dataframe
+    '''
+    for feature in features:
+        df[feature] = df[feature].astype(object)
+    obj_df = df[features]
+    dummy_df = pd.get_dummies(obj_df, dummy_na=False, drop_first=True)
+    df = pd.concat([df, dummy_df], axis=1)
+    df.drop(columns=features, inplace=True)
+    return df
