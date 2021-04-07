@@ -40,10 +40,18 @@ All files referenced in this presentation are available in the github repository
 
 #### Recommendation & Takeaways:
 
-- .
+- Overall, predicting log error is difficult to perform due to none of the features having a strong relationship with log error.<br>
+
+- This could be caused by over cleaning data, not having enough outside features collected, or changing social trends in property buying. <br>
+
+- Out of the available data and clusters, cluster_location_1 was built from latitude, longitude, cola, fips. This was chosen used as the best feature for modeling.<br>
 
 #### Given more Time and Resources, I would:
-- 
+
+
+- Due to time constraints, we were unable to model Test on lassoLars. Under previous iterations, the best performing model was the quadratic model just slightly outperforming baseline. With this iteration, none of the models outperformed baseline.<br>
+
+- Given more time and resources, model on cluster_location_2 to see if that cluster predicts logerror better than cluster_location_1. We would also identify the characteristics of the clusters. 
 
 
 
